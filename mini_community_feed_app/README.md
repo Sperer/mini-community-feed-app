@@ -1,9 +1,9 @@
-# 🧩 Mini Community App
+# Mini Community App
 
 The **Mini Community App** is a social feed application that allows users to view posts, like them, and explore image content in fullscreen mode.  
 It demonstrates **Clean Architecture**, **Bloc State Management**, and robust **API integration** with proper error handling and caching mechanisms.
 
-## ⚙️ Flutter SDK Version
+## Flutter SDK Version
 - **Minimum Flutter Version:** `3.22.0`  
 - **Recommended Flutter Version:** `3.35.7 (stable)`  
 
@@ -57,4 +57,7 @@ lib/
 └── main.dart → App entry point and BlocProviders
 ```
 
+## How To Run The App
+- Run command ```flutter pub get``` to get all the dependencies
+- Run command ```flutter run``` 
 
