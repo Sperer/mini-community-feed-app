@@ -26,8 +26,10 @@ class PostWidget extends StatefulWidget {
 
 class _PostWidgetState extends State<PostWidget> {
   bool isImageSuccessfullyLoaded = false;
+  bool isComingFromFullScreen = false;
 
   void _navigateToFullScreen(BuildContext context) {
+    isComingFromFullScreen = true;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -73,40 +75,38 @@ class _PostWidgetState extends State<PostWidget> {
       child: AspectRatio(
         aspectRatio: 16 / 9,
         child: CachedNetworkImage(
-          imageUrl: widget.thumbnailUrl,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          imageBuilder: (context, imageProvider) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (!isImageSuccessfullyLoaded) {
-                setState(() => isImageSuccessfullyLoaded = true);
-              }
-            });
-            return Image(image: imageProvider, fit: BoxFit.cover);
-          },
-          progressIndicatorBuilder: (context, url, progress) =>
-              Shimmer.fromColors(
-            baseColor: Colors.grey.shade400,
-            highlightColor: Colors.grey[100]!,
-            child: Container(color: Colors.grey[300]),
-          ),
-          errorWidget: (context, url, error) => Container(
-            color: Colors.grey[300],
-            child: const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.broken_image, size: 60, color: Colors.grey),
-                  SizedBox(height: 8),
-                  Text('Image not available'),
-                ],
-              ),
-            ),
-          ),
-        ),
+            imageUrl: widget.thumbnailUrl,
+            fit: BoxFit.cover,
+            width: double.infinity,
+            imageBuilder: (context, imageProvider) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!isImageSuccessfullyLoaded) {
+                  setState(() => isImageSuccessfullyLoaded = true);
+                }
+              });
+              return Image(image: imageProvider, fit: BoxFit.cover);
+            },
+            progressIndicatorBuilder: (context, url, progress) =>
+                !isComingFromFullScreen && !isImageSuccessfullyLoaded
+                    ? Shimmer.fromColors(
+                        baseColor: Colors.grey.shade400,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(color: Colors.grey[300]),
+                      )
+                    : _buildFallback(),
+            errorWidget: (context, url, error) => _buildFallback()),
       ),
     );
   }
+
+  Widget _buildFallback() => Container(
+        width: double.infinity,
+        height: double.infinity,
+        color: Colors.grey[300],
+        child: const Center(
+          child: Icon(Icons.broken_image, size: 60, color: Colors.grey),
+        ),
+      );
 
   /// Builds caption + like button section
   Widget _buildCaptionSection(BuildContext context) {
